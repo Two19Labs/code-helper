@@ -5,7 +5,7 @@ const PROVIDERS = [
   { name: "Gemini", url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
     key: () => process.env.GEMINI_API_KEY, models: ["gemini-3-flash-preview", "gemini-flash-latest"] },
   { name: "Groq", url: "https://api.groq.com/openai/v1/chat/completions",
-    key: () => process.env.GROQ_API_KEY, models: ["llama-3.3-70b-versatile"] },
+    key: () => process.env.GROQ_API_KEY, models: ["openai/gpt-oss-120b", "qwen/qwen3.8-27b"] },
 ];
 
 export default async function handler(req, res) {
