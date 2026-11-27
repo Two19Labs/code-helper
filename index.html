@@ -23,7 +23,23 @@
   .bot { border-left:3px solid var(--accent); }
   .who { font-size:12px; color:var(--muted); margin-bottom:4px; }
   small { color:var(--muted); }
+  .bot .body { white-space:normal; }
+  .bot .body > :first-child { margin-top:0; }
+  .bot .body > :last-child { margin-bottom:0; }
+  .bot h1, .bot h2, .bot h3 { font-size:16px; margin:14px 0 6px; }
+  .bot p { margin:6px 0; }
+  .bot ul, .bot ol { margin:6px 0; padding-left:22px; }
+  .bot li { margin:3px 0; }
+  .bot code { font-family:ui-monospace, Consolas, monospace; font-size:13px; background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:1px 4px; }
+  .bot pre { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px; overflow-x:auto; }
+  .bot pre code { border:0; padding:0; background:none; }
+  .bot table { border-collapse:collapse; margin:8px 0; display:block; overflow-x:auto; }
+  .bot th, .bot td { border:1px solid var(--line); padding:5px 9px; text-align:left; }
+  .bot blockquote { margin:8px 0; padding:4px 12px; border-left:3px solid var(--accent); color:var(--muted); }
+  .via { font-size:12px; color:var(--muted); margin-top:8px; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 </head>
 <body>
 <main>
@@ -48,6 +64,7 @@ P5 logistic: yes/no -> 1/0 with .map, train_test_split(stratify, random_state), 
 P6 decision tree, random forest, K-means (elbow), hierarchical clustering (dendrogram).
 Datasets: credit.xlsx (Income, Limit, Rating, Cards, Age, Balance...), boston.xlsx (MEDV + 13 uppercase columns like CRIM, RM, LSTAT), bank.xlsx (age, job, marital, education, default, balance, housing-loan, personal-loan, current-campaign, previous-campaign, subscribed yes/no).
 Style they've been taught: import pandas as pd, statsmodels.api as sm; Y first in sm.OLS(Y, X); variable names like credit2, boston1, x_train.
+Format (markdown): start with a one-line answer; then short sections with "###" headings; bullet points over paragraphs; code always in \`\`\`python blocks; **bold** key terms; tables only for comparisons. No long walls of text.
 How to answer: simple language, short. For code, name each bug, say why it's wrong, show the fixed line. Explain outputs in plain words (e.g. "p < 0.05 means significant"). Don't make them do percentage arithmetic.`;
 let history = [];
 
@@ -78,7 +95,8 @@ async function ask() {
     const data = await r.json();
     if (!r.ok) throw new Error(data.error + (data.details ? "\n" + data.details.join("\n") : ""));
     const a = data.reply;
-    out.textContent = a + "\n\n— " + data.via;
+    out.innerHTML = DOMPurify.sanitize(marked.parse(a)) + '<div class="via"></div>';
+    out.querySelector(".via").textContent = "— " + data.via;
     history.push({ role: "assistant", content: a });
   } catch (e) {
     out.textContent = "⚠️ " + e.message;
